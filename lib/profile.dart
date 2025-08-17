@@ -1,42 +1,7 @@
 import 'package:flutter/material.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends StatelessWidget {
   const Profile({super.key});
-
-  @override
-  State<Profile> createState() => _ProfileState();
-}
-
-class _ProfileState extends State<Profile> {
-  int _selectedIndex = 4; // Index for 'user' icon
-
-  void _onItemTapped(int index) {
-    if (index == _selectedIndex) return;
-
-    setState(() => _selectedIndex = index);
-
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/diary');
-        break;
-      case 1:
-        Navigator.pushReplacementNamed(context, '/weather');
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/home');
-        break;
-      case 3:
-        Navigator.pushReplacementNamed(context, '/search', arguments: {
-          'title': 'Search',
-          'imagePath': 'assets/image/choco_cake.png',
-        });
-        break;
-      case 4:
-      // Already on Profile
-        break;
-    }
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +44,22 @@ class _ProfileState extends State<Profile> {
                     style: TextStyle(color: Colors.grey, fontSize: 13)),
               ),
               const SizedBox(height: 10),
-              _buildTile(Icons.add_circle_outline, "My stories",
-                  trailing: _buildBadge("5")),
+
+              // 👉 My stories tile
+              _buildTile(
+                Icons.add_circle_outline,
+                "My stories",
+                trailing: _buildBadge("5"),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const StoryScreen(),
+                    ),
+                  );
+                },
+              ),
+
               const SizedBox(height: 10),
               _buildTile(Icons.settings, "Setting"),
               const SizedBox(height: 20),
@@ -91,64 +70,55 @@ class _ProfileState extends State<Profile> {
               ),
               const SizedBox(height: 10),
               _buildTile(Icons.notifications_none, "Push notification"),
+
               const SizedBox(height: 10),
-              _buildTile(Icons.logout, "Logout",
-                  iconColor: Colors.red, textColor: Colors.red),
+              _buildTile(
+                Icons.logout,
+                "Logout",
+                iconColor: Colors.red,
+                textColor: Colors.red,
+                onTap: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/login', (route) => false);
+                },
+              ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: const Color(0xFFFFD7A3),
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: [
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/diaryy.png', height: 24),
-              label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/cloudy-day.png', height: 24),
-              label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/home.png', height: 24),
-              label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/search.png', height: 24),
-              label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/user.png', height: 24),
-              label: ''),
-        ],
-      ),
     );
   }
 
-  Widget _buildTile(IconData icon, String title,
-      {Widget? trailing,
+  // Reusable tile
+  Widget _buildTile(
+      IconData icon,
+      String title, {
+        Widget? trailing,
         Color iconColor = Colors.black,
-        Color textColor = Colors.black}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE0DFE4),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: iconColor),
-          const SizedBox(width: 10),
-          Expanded(child: Text(title, style: TextStyle(color: textColor))),
-          if (trailing != null) trailing,
-        ],
+        Color textColor = Colors.black,
+        VoidCallback? onTap,
+      }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE0DFE4),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor),
+            const SizedBox(width: 10),
+            Expanded(child: Text(title, style: TextStyle(color: textColor))),
+            if (trailing != null) trailing,
+          ],
+        ),
       ),
     );
   }
 
+  // Story count badge
   Widget _buildBadge(String count) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -160,6 +130,21 @@ class _ProfileState extends State<Profile> {
         count,
         style: const TextStyle(
             color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+}
+
+// 👉 Story view screen (inside same file)
+class StoryScreen extends StatelessWidget {
+  const StoryScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("My Stories")),
+      body: Center(
+        child: Image.asset("assets/image/story.jpg"), // Replace with your asset path
       ),
     );
   }

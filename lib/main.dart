@@ -23,48 +23,67 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       onGenerateRoute: (settings) {
-        if (settings.name == '/loading') {
-          final args = settings.arguments as Map<String, dynamic>?;
-          final nextRoute = args?['next'] ?? '/home';
-
-          return MaterialPageRoute(
-            builder: (context) => LoadingScreen(nextRoute: nextRoute),
-          );
-        }
-
         switch (settings.name) {
           case '/':
             return MaterialPageRoute(builder: (_) => const TapToContinue());
+
           case '/login':
             return MaterialPageRoute(builder: (_) => const Login());
+
           case '/signup':
             return MaterialPageRoute(builder: (_) => const SignUp());
+
           case '/forgot-password':
             return MaterialPageRoute(builder: (_) => const ForgetPassword());
+
+          case '/loading':
+            final args = settings.arguments as Map<String, dynamic>?;
+
+            return MaterialPageRoute(
+              builder: (_) => LoadingScreen(
+                nextRoute: args?['next'] ?? '/home',
+              ),
+            );
+
           case '/home':
             return MaterialPageRoute(builder: (_) => const Home());
+
           case '/search':
-            final args = settings.arguments as Map<String, dynamic>;
-            return MaterialPageRoute(
-              builder: (_) => Search(
-                title: args['title'],
-                imagePath: args['imagePath'],
-              ),
-            );
+            final args = settings.arguments;
+            if (args is Map<String, dynamic> &&
+                args.containsKey('title') &&
+                args.containsKey('imagePath')) {
+              return MaterialPageRoute(
+                builder: (_) => SearchScreen(
+                  title: args['title'],
+                  imagePath: args['imagePath'],
+                ),
+              );
+            }
+            return _errorRoute('Missing or invalid arguments for /search');
+
           case '/profile':
             return MaterialPageRoute(builder: (_) => const Profile());
+
           case '/diary':
             return MaterialPageRoute(builder: (_) => const Diary());
+
           case '/weather':
             return MaterialPageRoute(builder: (_) => const Weather());
+
           default:
-            return MaterialPageRoute(
-              builder: (_) => Scaffold(
-                body: Center(child: Text('Unknown route: ${settings.name}')),
-              ),
-            );
+            return _errorRoute('Unknown route: ${settings.name}');
         }
       },
+    );
+  }
+
+  MaterialPageRoute _errorRoute(String message) {
+    return MaterialPageRoute(
+      builder: (_) => Scaffold(
+        appBar: AppBar(title: const Text('Navigation Error')),
+        body: Center(child: Text(message)),
+      ),
     );
   }
 }

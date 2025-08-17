@@ -6,42 +6,7 @@ class Weather extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F2FD),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1, // Weather tab is selected
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: const Color(0xFFFFD7A3),
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushNamed(context, '/diary');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/home');
-          } else if (index == 3) {
-            Navigator.pushNamed(context, '/search', arguments: {
-              'title': 'Search',
-              'imagePath': 'assets/image/choco_cake.png'
-            });
-          } else if (index == 4) {
-            Navigator.pushNamed(context, '/profile');
-          }
-        },
-        items: [
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/diaryy.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/cloudy-day.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/home.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/search.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/user.png', height: 24), label: ''),
-        ],
-      ),
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),

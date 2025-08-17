@@ -1,64 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Search extends StatelessWidget {
+class SearchScreen extends StatelessWidget {
   final String title;
   final String imagePath;
 
-  const Search({super.key, required this.title, required this.imagePath});
+  const SearchScreen({super.key, required this.title, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF3F2FD),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF3F2FD),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 3,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        backgroundColor: const Color(0xFFFFD7A3),
-        type: BottomNavigationBarType.fixed,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (index) {
-          switch (index) {
-            case 0:
-              Navigator.pushReplacementNamed(context, '/diary');
-              break;
-            case 1:
-              Navigator.pushReplacementNamed(context, '/weather');
-              break;
-            case 2:
-              Navigator.pushReplacementNamed(context, '/home');
-              break;
-            case 3:
-            // Already in Search
-              break;
-            case 4:
-              Navigator.pushReplacementNamed(context, '/profile');
-              break;
-          }
-        },
 
-        items: [
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/diaryy.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/cloudy-day.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/home.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/search.png', height: 24), label: ''),
-          BottomNavigationBarItem(
-              icon: Image.asset('assets/icons/user.png', height: 24), label: ''),
-        ],
-      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         child: Column(

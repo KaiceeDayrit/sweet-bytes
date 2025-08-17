@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/diary.dart';
+import 'package:myapp/profile.dart';
+import 'package:myapp/weather.dart';
+import 'package:myapp/search.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -9,7 +13,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String selectedCategory = "Cake";
-  int currentIndex = 2;
+  int selectedIndex = 2;
 
   final List<String> categories = ["Cake", "Donut", "Cookies", "Cupcake"];
 
@@ -75,123 +79,22 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      const Diary(),
+      const Weather(),
+      buildHomePage(),
+      const SearchScreen(
+        title: 'Search',
+        imagePath: 'assets/image/choco_cake.png',
+      ),
+      const Profile(),
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F3FB),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const CircleAvatar(
-                    backgroundColor: Color(0xFFFFD89C),
-                    child: Icon(Icons.tune, color: Colors.black),
-                  ),
-                  const Spacer(),
-                  Image.asset("assets/image/cake.png", height: 60),
-                ],
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                "What would your like to eat?",
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: const TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search here....",
-                    border: InputBorder.none,
-                    suffixIcon: Icon(Icons.search, color: Color(0xFFFFD89C)),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                "Discover by category",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 12),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: categories.map((category) {
-                    final isSelected = category == selectedCategory;
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedCategory = category;
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFFFFD89C) : Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(getCategoryIcon(category), height: 24),
-                            const SizedBox(width: 6),
-                            Text(category),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                "Popular $selectedCategory${selectedCategory.endsWith('s') ? '' : 's'}",
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.8,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  children: filteredItems.map((item) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        children: [
-                          Image.asset(item['image']!, height: 100, fit: BoxFit.contain),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              item['title']!,
-                              style: const TextStyle(fontSize: 12),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          )
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      body: pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+        currentIndex: selectedIndex,
         selectedItemColor: const Color(0xFFFFD89C),
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
@@ -199,22 +102,8 @@ class _HomeState extends State<Home> {
         type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
-            currentIndex = index;
+            selectedIndex = index;
           });
-          if (index == 0) {
-            Navigator.pushNamed(context, '/diary');
-          } else if (index == 1) {
-            Navigator.pushNamed(context, '/weather');
-          } else if (index == 2) {
-            Navigator.pushNamed(context, '/home');
-          } else if (index == 3) {
-            Navigator.pushNamed(context, '/search', arguments: {
-              'title': 'Search',
-              'imagePath': 'assets/image/choco_cake.png'
-            });
-          } else if (index == 4) {
-            Navigator.pushNamed(context, '/profile');
-          }
         },
         items: [
           BottomNavigationBarItem(
@@ -228,6 +117,122 @@ class _HomeState extends State<Home> {
           BottomNavigationBarItem(
               icon: Image.asset('assets/icons/user.png', height: 24), label: ''),
         ],
+      ),
+    );
+  }
+
+  Widget buildHomePage() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const CircleAvatar(
+                  backgroundColor: Color(0xFFFFD89C),
+                  child: Icon(Icons.tune, color: Colors.black),
+                ),
+                const Spacer(),
+                Image.asset("assets/image/logo.png", height: 60),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "What would you like to eat?",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: const TextField(
+                decoration: InputDecoration(
+                  hintText: "Search here....",
+                  border: InputBorder.none,
+                  suffixIcon: Icon(Icons.search, color: Color(0xFFFFD89C)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              "Discover by category",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 12),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: categories.map((category) {
+                  final isSelected = category == selectedCategory;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedCategory = category;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? const Color(0xFFFFD89C) : Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(getCategoryIcon(category), height: 24),
+                          const SizedBox(width: 6),
+                          Text(category),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "Popular $selectedCategory${selectedCategory.endsWith('s') ? '' : 's'}",
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: GridView.count(
+                crossAxisCount: 2,
+                childAspectRatio: 0.8,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                children: filteredItems.map((item) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      children: [
+                        Image.asset(item['image']!, height: 100, fit: BoxFit.contain),
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Text(
+                            item['title']!,
+                            style: const TextStyle(fontSize: 12),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        )
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
